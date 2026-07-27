@@ -99,6 +99,12 @@ export const listarReservasAdmin = (status?: ReservaStatus) =>
 export const cancelarReserva = (id: number) =>
   request<void>(`/api/admin/reservas/${id}/cancelar`, { method: "POST", auth: true });
 
+export const confirmarPagamentoReserva = (id: number) =>
+  request<void>(`/api/admin/reservas/${id}/confirmar-pagamento`, {
+    method: "POST",
+    auth: true,
+  });
+
 /* --------- Admin: Financeiro --------- */
 export const buscarResumoFinanceiro = (periodo: "diario" | "semanal" | "mensal") =>
   request<ResumoFinanceiro>(`/api/admin/financeiro/resumo?periodo=${periodo}`, {

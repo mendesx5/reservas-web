@@ -92,7 +92,7 @@ function StatusReservaPage() {
                 href={query.data.checkoutUrl}
                 className="mt-8 flex items-center justify-center gap-2 rounded-full bg-accent text-accent-foreground py-4 text-sm font-semibold shadow-glow"
               >
-                Pagar agora <ExternalLink className="h-4 w-4" />
+                Continuar pelo WhatsApp <ExternalLink className="h-4 w-4" />
               </motion.a>
             )}
 

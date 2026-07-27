@@ -26,6 +26,7 @@ import {
   atualizarLocal,
   buscarResumoFinanceiro,
   cancelarReserva,
+  confirmarPagamentoReserva,
   criarAdicional,
   criarLocal,
   desativarAdicional,
@@ -474,6 +475,15 @@ function Reservas() {
     },
     onError: (e: Error) => toast.error(e.message),
   });
+  const confirmMut = useMutation({
+    mutationFn: confirmarPagamentoReserva,
+    onSuccess: () => {
+      toast.success("Pagamento confirmado.");
+      qc.invalidateQueries({ queryKey: ["admin-reservas"] });
+      qc.invalidateQueries({ queryKey: ["admin-financeiro"] });
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
 
   const reservas = (reservasQuery.data ?? []).filter((r) => {
     if (adicionalFilter === "com") return r.adicionais.length > 0;
@@ -591,12 +601,13 @@ function Reservas() {
                         nenhum
                       </span>
                     ) : (
-                      <span
-                        className="text-[10px] uppercase tracking-wider bg-accent/15 text-accent px-2 py-0.5 rounded-full"
-                        title={r.adicionais.map((a) => `${a.quantidade}× ${a.nome}`).join(", ")}
-                      >
-                        {r.adicionais.length} item{r.adicionais.length > 1 ? "s" : ""}
-                      </span>
+                      <ul className="space-y-1 text-xs text-accent">
+                        {r.adicionais.map((a, index) => (
+                          <li key={`${a.nome}-${index}`}>
+                            {a.quantidade}x {a.nome}
+                          </li>
+                        ))}
+                      </ul>
                     )}
                   </td>
 
@@ -605,14 +616,24 @@ function Reservas() {
                   </td>
                   <td className="px-4 py-3 text-right">
                     {r.status === "AGUARDANDO_PAGAMENTO" && (
-                      <button
-                        onClick={() => {
-                          if (confirm(`Cancelar reserva #${r.id}?`)) cancelMut.mutate(r.id);
-                        }}
-                        className="rounded-full bg-destructive/10 text-destructive px-3 py-1 text-xs font-semibold hover:bg-destructive/20"
-                      >
-                        Cancelar
-                      </button>
+                      <div className="flex justify-end gap-2">
+                        <button
+                          onClick={() => {
+                            if (confirm(`Confirmar o pagamento da reserva #${r.id}?`)) confirmMut.mutate(r.id);
+                          }}
+                          className="rounded-full bg-leaf/10 text-leaf px-3 py-1 text-xs font-semibold hover:bg-leaf/20"
+                        >
+                          Confirmar pagamento
+                        </button>
+                        <button
+                          onClick={() => {
+                            if (confirm(`Cancelar reserva #${r.id}?`)) cancelMut.mutate(r.id);
+                          }}
+                          className="rounded-full bg-destructive/10 text-destructive px-3 py-1 text-xs font-semibold hover:bg-destructive/20"
+                        >
+                          Cancelar
+                        </button>
+                      </div>
                     )}
                   </td>
                 </motion.tr>

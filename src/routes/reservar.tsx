@@ -111,7 +111,7 @@ function ReservarPage() {
         adicionais: adicionais.map((a) => ({ adicionalId: a.id, quantidade: a.quantidade })),
       });
       setRedirecionando(true);
-      toast.success("Reserva criada! Redirecionando para o pagamento...");
+      toast.success("Reserva criada! Abrindo o WhatsApp para combinar o pagamento...");
       setTimeout(() => {
         window.location.href = resposta.checkoutUrl;
       }, 900);
@@ -131,7 +131,7 @@ function ReservarPage() {
         <Reveal>
           <p className="text-xs font-medium text-accent uppercase tracking-[0.3em]">Nova reserva</p>
           <h1 className="mt-3 font-display text-4xl md:text-6xl font-semibold text-balance">
-            {redirecionando ? "Levando você ao pagamento..." : "Escolha o dia perfeito"}
+            {redirecionando ? "Abrindo o WhatsApp..." : "Escolha o dia perfeito"}
           </h1>
           {!redirecionando && (
             <p className="mt-3 text-muted-foreground max-w-xl">
@@ -150,7 +150,7 @@ function ReservarPage() {
             >
               <Loader2 className="h-8 w-8 animate-spin mx-auto text-primary" />
               <p className="mt-5 text-muted-foreground">
-                Estamos abrindo o Mercado Pago para você concluir com PIX ou cartão. Aguarde alguns instantes.
+                Estamos abrindo o WhatsApp para você combinar o pagamento com o responsável. Aguarde alguns instantes.
               </p>
             </motion.div>
           ) : (
@@ -359,8 +359,8 @@ function ReservarPage() {
                     )}
                   </button>
                   <p className="mt-3 text-xs text-muted-foreground text-center leading-relaxed">
-                    Você será redirecionado ao Mercado Pago para pagar com PIX ou cartão.
-                    Sua reserva só é confirmada após o pagamento.
+                    Você será direcionado ao WhatsApp para combinar o pagamento.
+                    Sua reserva só é confirmada após a confirmação do responsável.
                   </p>
                 </motion.div>
               </aside>

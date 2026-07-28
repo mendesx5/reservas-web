@@ -43,7 +43,7 @@
   --color-cream: var(--cream);
 
   --shadow-soft: 0 20px 40px -24px oklch(0.35 0.08 150 / 0.35);
-  --shadow-glow: 0 0 80px -10px oklch(0.55 0.22 8 / 0.35);
+  --shadow-glow: 0 0 80px -10px oklch(0.6 0.15 45 / 0.35);
   --shadow-ring: 0 0 0 1px oklch(0.4 0.06 150 / 0.08), 0 12px 32px -18px oklch(0.35 0.08 150 / 0.28);
 
   --animate-float: float 8s ease-in-out infinite;
@@ -73,13 +73,13 @@
   --muted: oklch(0.95 0.02 210);
   --muted-foreground: oklch(0.48 0.03 220);
 
-  /* Bougainvillea magenta accent */
-  --accent: oklch(0.62 0.22 8);
+  /* Warm string-light amber accent (matches the pergola lights in the real photos) */
+  --accent: oklch(0.6 0.15 45);
   --accent-foreground: oklch(0.99 0 0);
 
-  --bougainvillea: oklch(0.62 0.22 8);
-  --leaf: oklch(0.72 0.14 205);      /* pool turquoise */
-  --terracotta: oklch(0.7 0.13 60);  /* warm sunset */
+  --bougainvillea: oklch(0.6 0.15 45);
+  --leaf: oklch(0.66 0.17 213);      /* vivid fiberglass pool blue */
+  --terracotta: oklch(0.68 0.12 55); /* weathered wood / warm tile */
   --cream: oklch(0.96 0.03 90);
 
   --destructive: oklch(0.58 0.24 27);
@@ -103,8 +103,8 @@
   --secondary-foreground: oklch(0.96 0.015 90);
   --muted: oklch(0.24 0.04 225);
   --muted-foreground: oklch(0.72 0.03 210);
-  --accent: oklch(0.65 0.22 8);
-  --accent-foreground: oklch(0.99 0 0);
+  --accent: oklch(0.68 0.15 55);
+  --accent-foreground: oklch(0.2 0.05 230);
   --border: oklch(1 0 0 / 12%);
   --input: oklch(1 0 0 / 15%);
   --ring: oklch(0.7 0.12 210);
@@ -137,12 +137,12 @@
 }
 
 @utility gradient-garden {
-  /* Pool sunset — deep teal to bougainvillea */
+  /* Pool at night — deep teal into vivid pool blue, warmed by string-light amber */
   background-image: linear-gradient(
     135deg,
     oklch(0.38 0.11 220) 0%,
-    oklch(0.5 0.15 210) 45%,
-    oklch(0.58 0.2 12) 100%
+    oklch(0.5 0.15 212) 45%,
+    oklch(0.62 0.15 55) 100%
   );
 }
 
@@ -159,8 +159,8 @@
 @utility gradient-bloom {
   background-image: linear-gradient(
     135deg,
-    oklch(0.68 0.2 12) 0%,
-    oklch(0.55 0.22 6) 100%
+    oklch(0.7 0.15 55) 0%,
+    oklch(0.56 0.14 45) 100%
   );
 }
 

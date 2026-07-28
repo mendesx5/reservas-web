@@ -16,10 +16,11 @@ import {
 } from "lucide-react";
 import { SiteHeader, SiteFooter } from "@/components/site-chrome";
 import { Reveal, Stagger, StaggerItem } from "@/components/motion-primitives";
-import heroPiscina from "@/assets/hero-piscina.jpg";
-import churrasqueira from "@/assets/churrasqueira-piscina.jpg";
-import piscinaDia from "@/assets/piscina-dia.jpg";
-import piscinaNoite from "@/assets/piscina-noite.jpg";
+import heroPiscina from "@/assets/piscina3.jpeg";
+import espaconoite from "@/assets/espaco-completo2.jpeg";
+import piscinaDia from "@/assets/piscina1.jpeg";
+import espacocompleto from "@/assets/espaco1.jpeg";
+import piscinaDeck from "@/assets/espaco-completo1.jpeg";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -195,7 +196,7 @@ function Espaco() {
           <div className="relative pb-6 sm:pb-0">
             <div className="aspect-[4/5] sm:aspect-[4/5] rounded-2xl sm:rounded-3xl overflow-hidden shadow-ring">
               <img
-                src={piscinaDia}
+                src={piscinaDeck}
                 alt="Piscina com espreguiçadeiras sob ombrelone de palha"
                 loading="lazy"
                 className="h-full w-full object-cover sm:hover:scale-105 transition-transform duration-[1200ms]"
@@ -334,8 +335,8 @@ function Galeria() {
         {[
           { src: heroPiscina, alt: "Piscina ao entardecer", span: "col-span-6 md:col-span-4 row-span-2" },
           { src: piscinaDia, alt: "Piscina durante o dia", span: "col-span-3 md:col-span-2 row-span-2" },
-          { src: churrasqueira, alt: "Churrasqueira ao lado da piscina", span: "col-span-3 md:col-span-3" },
-          { src: piscinaNoite, alt: "Piscina iluminada à noite", span: "col-span-3 md:col-span-3" },
+          { src: espaconoite, alt: "Churrasqueira ao lado da piscina", span: "col-span-3 md:col-span-3" },
+          { src: espacocompleto, alt: "Piscina iluminada à noite", span: "col-span-3 md:col-span-3" },
         ].map((img, i) => (
           <motion.div
             key={i}

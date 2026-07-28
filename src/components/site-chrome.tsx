@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
-import { motion } from "motion/react";
-import { Waves, Instagram, MessageCircle } from "lucide-react";
+import { motion, AnimatePresence } from "motion/react";
+import { Waves, Instagram, MessageCircle, Menu, X } from "lucide-react";
+import { useState } from "react";
 
 export function Brand({ size = "md" }: { size?: "sm" | "md" }) {
   const dim = size === "sm" ? "h-8 w-8" : "h-10 w-10";
@@ -21,7 +22,16 @@ export function Brand({ size = "md" }: { size?: "sm" | "md" }) {
   );
 }
 
+const NAV_LINKS = [
+  { href: "/#espaco", label: "O espaço" },
+  { href: "/#incluso", label: "O que inclui" },
+  { href: "/#galeria", label: "Galeria" },
+  { href: "/#reservar", label: "Reservar" },
+];
+
 export function SiteHeader() {
+  const [open, setOpen] = useState(false);
+
   return (
     <motion.header
       initial={{ y: -20, opacity: 0 }}
@@ -29,30 +39,73 @@ export function SiteHeader() {
       transition={{ duration: 0.5 }}
       className="sticky top-0 z-40 backdrop-blur-md bg-background/70 border-b border-border/60"
     >
-      <div className="mx-auto max-w-7xl px-6 h-16 flex items-center justify-between">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 h-16 flex items-center justify-between gap-3">
         <Brand />
         <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-muted-foreground">
-          <a href="/#espaco" className="hover:text-foreground transition-colors">O espaço</a>
-          <a href="/#incluso" className="hover:text-foreground transition-colors">O que inclui</a>
-          <a href="/#galeria" className="hover:text-foreground transition-colors">Galeria</a>
-          <a href="/#reservar" className="hover:text-foreground transition-colors">Reservar</a>
+          {NAV_LINKS.map((l) => (
+            <a key={l.href} href={l.href} className="hover:text-foreground transition-colors">
+              {l.label}
+            </a>
+          ))}
         </nav>
-        <Link
-          to="/reservar"
-          className="group inline-flex items-center gap-2 rounded-full bg-primary text-primary-foreground px-5 py-2.5 text-sm font-semibold shadow-soft hover:shadow-glow transition-all"
-        >
-          Reservar data
-          <span className="transition-transform group-hover:translate-x-0.5">→</span>
-        </Link>
+        <div className="flex items-center gap-2">
+          <Link
+            to="/reservar"
+            className="group hidden sm:inline-flex items-center gap-2 rounded-full bg-primary text-primary-foreground px-5 py-2.5 text-sm font-semibold shadow-soft hover:shadow-glow transition-all"
+          >
+            Reservar data
+            <span className="transition-transform group-hover:translate-x-0.5">→</span>
+          </Link>
+          <Link
+            to="/reservar"
+            className="inline-flex sm:hidden items-center gap-1.5 rounded-full bg-primary text-primary-foreground px-4 py-2.5 text-xs font-semibold shadow-soft active:scale-95 transition-transform"
+          >
+            Reservar
+          </Link>
+          <button
+            type="button"
+            onClick={() => setOpen((v) => !v)}
+            aria-label={open ? "Fechar menu" : "Abrir menu"}
+            aria-expanded={open}
+            className="md:hidden inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-border/60 bg-background/80 text-foreground active:scale-95 transition-transform"
+          >
+            {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </button>
+        </div>
       </div>
+
+      <AnimatePresence>
+        {open && (
+          <motion.nav
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+            className="md:hidden overflow-hidden border-t border-border/60 bg-background/95 backdrop-blur-md"
+          >
+            <div className="flex flex-col px-4 sm:px-6 py-3">
+              {NAV_LINKS.map((l) => (
+                <a
+                  key={l.href}
+                  href={l.href}
+                  onClick={() => setOpen(false)}
+                  className="py-3.5 text-base font-medium text-foreground border-b border-border/40 last:border-b-0 active:text-primary transition-colors"
+                >
+                  {l.label}
+                </a>
+              ))}
+            </div>
+          </motion.nav>
+        )}
+      </AnimatePresence>
     </motion.header>
   );
 }
 
 export function SiteFooter() {
   return (
-    <footer id="contato" className="mt-24 border-t border-border/60 bg-secondary/40">
-      <div className="mx-auto max-w-7xl px-6 py-14 grid gap-10 md:grid-cols-3">
+    <footer id="contato" className="mt-16 md:mt-24 border-t border-border/60 bg-secondary/40">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 py-10 md:py-14 grid gap-8 md:gap-10 md:grid-cols-3">
         <div>
           <Brand />
           <p className="mt-4 text-sm text-muted-foreground max-w-xs leading-relaxed">

@@ -18,6 +18,7 @@ import {
   ExternalLink,
   ChevronLeft,
   ChevronRight,
+  Globe,
 } from "lucide-react";
 
 import { isAdminAuthed, logoutAdmin } from "@/lib/admin-auth";
@@ -76,18 +77,29 @@ function Dashboard() {
   return (
     <div className="min-h-screen bg-cream">
       <header className="bg-primary text-primary-foreground">
-        <div className="mx-auto max-w-7xl px-6 h-16 flex items-center justify-between">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 h-16 flex items-center justify-between gap-3">
           <Brand size="sm" />
-          <div className="flex items-center gap-3 text-sm">
-            <Link to="/" className="text-primary-foreground/80 hover:text-primary-foreground">
+          <div className="flex items-center gap-2 xs:gap-3 text-sm shrink-0">
+            <Link
+              to="/"
+              aria-label="Ver site"
+              className="hidden xs:inline-flex items-center rounded-full px-3 py-2 text-primary-foreground/80 hover:text-primary-foreground hover:bg-primary-foreground/10 transition-colors"
+            >
               Ver site
+            </Link>
+            <Link
+              to="/"
+              aria-label="Ver site"
+              className="inline-flex xs:hidden h-9 w-9 items-center justify-center rounded-full bg-primary-foreground/10 text-primary-foreground/90"
+            >
+              <Globe className="h-4 w-4" />
             </Link>
             <button
               onClick={() => {
                 logoutAdmin();
                 navigate({ to: "/admin" });
               }}
-              className="inline-flex items-center gap-1.5 rounded-full bg-primary-foreground/10 hover:bg-primary-foreground/20 px-4 py-2 font-medium transition-colors"
+              className="inline-flex items-center gap-1.5 rounded-full bg-primary-foreground/10 hover:bg-primary-foreground/20 px-3.5 sm:px-4 py-2 font-medium transition-colors"
             >
               <LogOut className="h-3.5 w-3.5" /> Sair
             </button>
@@ -95,7 +107,7 @@ function Dashboard() {
         </div>
       </header>
 
-      <div className="mx-auto max-w-7xl px-6 py-8 md:py-12">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 py-6 sm:py-8 md:py-12">
         <Tabs aba={aba} setAba={setAba} />
         <div className="mt-8">
           <AnimatePresence mode="wait">
@@ -135,29 +147,31 @@ function Tabs({ aba, setAba }: { aba: Aba; setAba: (a: Aba) => void }) {
   ];
 
   return (
-    <div className="inline-flex gap-1 rounded-full bg-card border border-border p-1 shadow-soft">
-      {tabs.map((t) => {
-        const active = aba === t.id;
-        return (
-          <button
-            key={t.id}
-            onClick={() => setAba(t.id)}
-            className={`relative inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-medium transition-colors ${
-              active ? "text-primary-foreground" : "text-muted-foreground hover:text-foreground"
-            }`}
-          >
-            {active && (
-              <motion.span
-                layoutId="tab-pill"
-                className="absolute inset-0 rounded-full bg-primary"
-                transition={{ type: "spring", stiffness: 400, damping: 32 }}
-              />
-            )}
-            <t.icon className="relative h-4 w-4" />
-            <span className="relative">{t.label}</span>
-          </button>
-        );
-      })}
+    <div className="relative -mx-4 sm:mx-0 px-4 sm:px-0">
+      <div className="flex gap-1 overflow-x-auto no-scrollbar rounded-full bg-card border border-border p-1 shadow-soft w-full sm:w-fit sm:inline-flex">
+        {tabs.map((t) => {
+          const active = aba === t.id;
+          return (
+            <button
+              key={t.id}
+              onClick={() => setAba(t.id)}
+              className={`relative inline-flex shrink-0 items-center gap-1.5 rounded-full px-4 py-2 text-sm font-medium transition-colors whitespace-nowrap ${
+                active ? "text-primary-foreground" : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              {active && (
+                <motion.span
+                  layoutId="tab-pill"
+                  className="absolute inset-0 rounded-full bg-primary"
+                  transition={{ type: "spring", stiffness: 400, damping: 32 }}
+                />
+              )}
+              <t.icon className="relative h-4 w-4 shrink-0" />
+              <span className="relative">{t.label}</span>
+            </button>
+          );
+        })}
+      </div>
     </div>
   );
 }
@@ -536,7 +550,102 @@ function Reservas() {
       </div>
 
 
-      <div className="mt-6 overflow-hidden rounded-2xl border border-border bg-card">
+      {/* Mobile: cards com detalhes escondidos até o clique */}
+      <div className="mt-6 sm:hidden space-y-3">
+        {reservasQuery.isLoading && (
+          <div className="rounded-2xl border border-border bg-card py-12 flex justify-center">
+            <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+          </div>
+        )}
+        {!reservasQuery.isLoading && reservas.length === 0 && (
+          <div className="rounded-2xl border border-border bg-card py-12 text-center text-sm text-muted-foreground">
+            Nenhuma reserva encontrada.
+          </div>
+        )}
+        {reservas.map((r) => (
+          <details
+            key={r.id}
+            className="group rounded-2xl border border-border bg-card overflow-hidden open:shadow-soft"
+          >
+            <summary className="cursor-pointer list-none flex items-center justify-between gap-3 p-4">
+              <div className="min-w-0">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="font-mono text-[11px] text-muted-foreground">#{r.id}</span>
+                  <StatusBadge status={r.status} />
+                </div>
+                <p className="mt-1.5 font-medium truncate">{r.nomeCliente}</p>
+                <p className="mt-0.5 text-xs text-muted-foreground">
+                  {new Date(r.dataInicio).toLocaleString("pt-BR")}
+                </p>
+              </div>
+              <div className="flex items-center gap-2 shrink-0">
+                <span className="font-semibold text-sm whitespace-nowrap">{formatarReal(r.valorTotal)}</span>
+                <span className="h-7 w-7 rounded-full bg-secondary grid place-items-center text-primary text-sm transition-transform group-open:rotate-45">
+                  +
+                </span>
+              </div>
+            </summary>
+
+            <div className="border-t border-border px-4 py-4 space-y-3 text-sm">
+              <div className="flex items-center justify-between">
+                <span className="text-muted-foreground">Telefone</span>
+                <span>{r.telefoneCliente}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-muted-foreground">Pagamento</span>
+                <span>{r.metodoPagamento ?? "—"}</span>
+              </div>
+              <div>
+                <span className="text-muted-foreground block mb-1.5">Adicionais</span>
+                {r.adicionais.length === 0 ? (
+                  <span className="text-[10px] uppercase tracking-wider bg-muted text-muted-foreground px-2 py-0.5 rounded-full">
+                    nenhum
+                  </span>
+                ) : (
+                  <ul className="space-y-1 text-accent">
+                    {r.adicionais.map((a, index) => (
+                      <li key={`${a.nome}-${index}`}>
+                        {a.quantidade}x {a.nome}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+              <Link
+                to="/reserva/$codigoAcesso"
+                params={{ codigoAcesso: r.codigoAcesso }}
+                className="text-primary hover:underline inline-flex items-center gap-1"
+              >
+                link do cliente <ExternalLink className="h-3 w-3" />
+              </Link>
+
+              {r.status === "AGUARDANDO_PAGAMENTO" && (
+                <div className="flex gap-2 pt-1">
+                  <button
+                    onClick={() => {
+                      if (confirm(`Confirmar o pagamento da reserva #${r.id}?`)) confirmMut.mutate(r.id);
+                    }}
+                    className="flex-1 rounded-full bg-leaf/10 text-leaf px-3 py-2.5 text-xs font-semibold active:bg-leaf/20"
+                  >
+                    Confirmar pagamento
+                  </button>
+                  <button
+                    onClick={() => {
+                      if (confirm(`Cancelar reserva #${r.id}?`)) cancelMut.mutate(r.id);
+                    }}
+                    className="flex-1 rounded-full bg-destructive/10 text-destructive px-3 py-2.5 text-xs font-semibold active:bg-destructive/20"
+                  >
+                    Cancelar
+                  </button>
+                </div>
+              )}
+            </div>
+          </details>
+        ))}
+      </div>
+
+      {/* Tablet/desktop: tabela completa */}
+      <div className="mt-6 hidden sm:block overflow-hidden rounded-2xl border border-border bg-card">
         <div className="overflow-x-auto">
           <table className="w-full text-sm min-w-[820px]">
             <thead className="bg-secondary/60 text-xs uppercase tracking-wider text-muted-foreground">

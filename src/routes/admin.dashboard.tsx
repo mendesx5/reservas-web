@@ -147,31 +147,29 @@ function Tabs({ aba, setAba }: { aba: Aba; setAba: (a: Aba) => void }) {
   ];
 
   return (
-    <div className="relative -mx-4 sm:mx-0 px-4 sm:px-0">
-      <div className="flex gap-1 overflow-x-auto no-scrollbar rounded-full bg-card border border-border p-1 shadow-soft w-full sm:w-fit sm:inline-flex">
-        {tabs.map((t) => {
-          const active = aba === t.id;
-          return (
-            <button
-              key={t.id}
-              onClick={() => setAba(t.id)}
-              className={`relative inline-flex shrink-0 items-center gap-1.5 rounded-full px-4 py-2 text-sm font-medium transition-colors whitespace-nowrap ${
-                active ? "text-primary-foreground" : "text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              {active && (
-                <motion.span
-                  layoutId="tab-pill"
-                  className="absolute inset-0 rounded-full bg-primary"
-                  transition={{ type: "spring", stiffness: 400, damping: 32 }}
-                />
-              )}
+    <div className="flex flex-wrap gap-1.5 sm:gap-1 rounded-2xl sm:rounded-full bg-card border border-border p-1.5 sm:p-1 shadow-soft w-full sm:w-fit">
+      {tabs.map((t) => {
+        const active = aba === t.id;
+        return (
+          <button
+            key={t.id}
+            onClick={() => setAba(t.id)}
+            className={`relative inline-flex items-center gap-1.5 rounded-full px-3.5 sm:px-4 py-2 text-xs sm:text-sm font-medium transition-colors whitespace-nowrap ${
+              active ? "text-primary-foreground" : "text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            {active && (
+              <motion.span
+                layoutId="tab-pill"
+                className="absolute inset-0 rounded-full bg-primary"
+                transition={{ type: "spring", stiffness: 400, damping: 32 }}
+              />
+            )}
               <t.icon className="relative h-4 w-4 shrink-0" />
               <span className="relative">{t.label}</span>
             </button>
           );
         })}
-      </div>
     </div>
   );
 }

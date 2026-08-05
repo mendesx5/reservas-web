@@ -13,10 +13,14 @@ import {
   Mail,
   Sparkles,
   ArrowRight,
+  Copy,
+  Check,
+  ExternalLink,
+  MessageCircle,
 } from "lucide-react";
 import { SiteHeader, SiteFooter } from "@/components/site-chrome";
 import { ApiError, criarReserva, listarAdicionais, listarLocais } from "@/lib/api";
-import { formatarReal } from "@/lib/reservas";
+import { formatarReal, paraLocalDateTimeIso } from "@/lib/reservas";
 import { Reveal } from "@/components/motion-primitives";
 
 export const Route = createFileRoute("/reservar")({
@@ -39,8 +43,12 @@ interface AdicionalSelecionado {
 }
 
 function ReservarPage() {
-  const [redirecionando, setRedirecionando] = useState(false);
   const [enviando, setEnviando] = useState(false);
+  const [reservaCriada, setReservaCriada] = useState<{
+    codigoAcesso: string;
+    checkoutUrl: string;
+  } | null>(null);
+  const [linkCopiado, setLinkCopiado] = useState(false);
 
   const locaisQuery = useQuery({ queryKey: ["locais"], queryFn: listarLocais });
   const adicionaisQuery = useQuery({ queryKey: ["adicionais"], queryFn: listarAdicionais });
@@ -103,18 +111,15 @@ function ReservarPage() {
     try {
       const resposta = await criarReserva({
         localId,
-        dataInicio: inicio.toISOString(),
-        dataFim: fim.toISOString(),
+        dataInicio: paraLocalDateTimeIso(inicio),
+        dataFim: paraLocalDateTimeIso(fim),
         nomeCliente: nome.trim(),
         telefoneCliente: telefone.trim(),
         emailCliente: email.trim() || undefined,
         adicionais: adicionais.map((a) => ({ adicionalId: a.id, quantidade: a.quantidade })),
       });
-      setRedirecionando(true);
-      toast.success("Reserva criada! Abrindo o WhatsApp para combinar o pagamento...");
-      setTimeout(() => {
-        window.location.href = resposta.checkoutUrl;
-      }, 900);
+      setReservaCriada({ codigoAcesso: resposta.codigoAcesso, checkoutUrl: resposta.checkoutUrl });
+      toast.success("Reserva criada! Guarde seu link de acompanhamento abaixo.");
     } catch (err) {
       if (err instanceof ApiError) toast.error(err.message);
       else toast.error("Não foi possível conectar ao servidor.");
@@ -131,9 +136,9 @@ function ReservarPage() {
         <Reveal>
           <p className="text-xs font-medium text-accent uppercase tracking-[0.3em]">Nova reserva</p>
           <h1 className="mt-3 font-display text-4xl md:text-6xl font-semibold text-balance">
-            {redirecionando ? "Abrindo o WhatsApp..." : "Escolha o dia perfeito"}
+            {reservaCriada ? "Reserva recebida!" : "Escolha o dia perfeito"}
           </h1>
-          {!redirecionando && (
+          {!reservaCriada && (
             <p className="mt-3 text-muted-foreground max-w-xl">
               Preencha os dados abaixo. A diária tem 12 horas — você escolhe o horário de início.
             </p>
@@ -141,17 +146,75 @@ function ReservarPage() {
         </Reveal>
 
         <AnimatePresence mode="wait">
-          {redirecionando ? (
+          {reservaCriada ? (
             <motion.div
-              key="redirect"
+              key="confirmacao"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="mt-10 rounded-3xl bg-card border border-border p-12 text-center shadow-soft"
+              className="mt-10 rounded-3xl bg-card border border-border p-6 sm:p-10 md:p-12 shadow-soft"
             >
-              <Loader2 className="h-8 w-8 animate-spin mx-auto text-primary" />
-              <p className="mt-5 text-muted-foreground">
-                Estamos abrindo o WhatsApp para você combinar o pagamento com o responsável. Aguarde alguns instantes.
-              </p>
+              <div className="mx-auto max-w-lg text-center">
+                <span className="mx-auto h-14 w-14 rounded-full bg-leaf/15 text-leaf grid place-items-center">
+                  <Check className="h-6 w-6" />
+                </span>
+                <p className="mt-5 text-muted-foreground">
+                  Sua solicitação de reserva foi registrada. Guarde o link abaixo — é por ele
+                  que você acompanha o status do pagamento e da sua data, mesmo sem estar
+                  logado.
+                </p>
+
+                <div className="mt-6 rounded-2xl border border-border bg-secondary/50 p-3 sm:p-4">
+                  <p className="text-[11px] uppercase tracking-widest text-muted-foreground text-left">
+                    Seu link de acompanhamento
+                  </p>
+                  <div className="mt-2 flex items-center gap-2">
+                    <input
+                      readOnly
+                      value={`${window.location.origin}/reserva/${reservaCriada.codigoAcesso}`}
+                      onFocus={(e) => e.currentTarget.select()}
+                      className="min-w-0 flex-1 rounded-xl border border-border bg-background px-3 py-2.5 text-xs sm:text-sm text-foreground truncate"
+                    />
+                    <button
+                      type="button"
+                      onClick={async () => {
+                        const link = `${window.location.origin}/reserva/${reservaCriada.codigoAcesso}`;
+                        try {
+                          await navigator.clipboard.writeText(link);
+                          setLinkCopiado(true);
+                          toast.success("Link copiado!");
+                          setTimeout(() => setLinkCopiado(false), 2000);
+                        } catch {
+                          toast.error("Não foi possível copiar. Selecione e copie manualmente.");
+                        }
+                      }}
+                      className="shrink-0 inline-flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-primary-foreground active:scale-95 transition-transform"
+                      aria-label="Copiar link"
+                    >
+                      {linkCopiado ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                    </button>
+                  </div>
+                  <a
+                    href={`/reserva/${reservaCriada.codigoAcesso}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-2.5 inline-flex items-center gap-1.5 text-xs text-primary hover:underline"
+                  >
+                    Abrir minha reserva <ExternalLink className="h-3 w-3" />
+                  </a>
+                </div>
+
+                <a
+                  href={reservaCriada.checkoutUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-full bg-accent text-accent-foreground py-4 text-sm font-semibold shadow-glow active:scale-[0.98] sm:hover:scale-[1.02] transition-transform"
+                >
+                  <MessageCircle className="h-4 w-4" /> Continuar no WhatsApp
+                </a>
+                <p className="mt-3 text-xs text-muted-foreground">
+                  O link de acompanhamento também vai junto na mensagem do WhatsApp.
+                </p>
+              </div>
             </motion.div>
           ) : (
             <motion.form

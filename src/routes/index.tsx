@@ -49,6 +49,7 @@ function Home() {
         <Incluso />
         <Galeria />
         <Preco />
+        <Localizacao />
         <FAQ />
       </main>
       <SiteFooter />
@@ -440,6 +441,71 @@ function Preco() {
 }
 
 /* ------------------------------- FAQ ------------------------------- */
+/* ============================== LOCALIZAÇÃO ============================== */
+function Localizacao() {
+  const endereco = "BR-101 - Areia Branca, Canguaretama - RN, 59190-000";
+  const linkGoogleMaps =
+    "https://www.google.com/maps/place/Espa%C3%A7o+de+Lazer+Buganville+Garden/@-6.3567136,-35.1654961,16.67z/data=!4m6!3m5!1s0x7b2816dd961f3db:0x37649a4ee0a58c9a!8m2!3d-6.3547961!4d-35.1632049!16s%2Fg%2F11zgn1ty7l?authuser=0&entry=ttu";
+  const embedSrc = "https://www.google.com/maps?q=-6.3547961,-35.1632049&z=16&output=embed";
+
+  return (
+    <section id="localizacao" className="mx-auto max-w-7xl px-4 sm:px-6 py-16 sm:py-24 md:py-32">
+      <div className="grid gap-8 sm:gap-10 md:grid-cols-2 items-center">
+        <Reveal>
+          <p className="text-xs font-medium text-accent uppercase tracking-[0.3em]">Como chegar</p>
+          <h2 className="mt-3 font-display text-3xl sm:text-4xl md:text-5xl font-semibold text-balance">
+            Fácil de achar,{" "}
+            <span className="italic text-accent">perto de todo mundo.</span>
+          </h2>
+          <p className="mt-5 text-muted-foreground leading-relaxed">
+            Saindo de Canguaretama, Goianinha ou Piquiri, é rapidinho chegar até a gente
+            — bem na beira da BR-101.
+          </p>
+
+          <div className="mt-6 flex items-start gap-3 rounded-2xl border border-border bg-card p-4 sm:p-5">
+            <span className="h-9 w-9 shrink-0 rounded-full bg-primary/10 grid place-items-center text-primary">
+              <MapPin className="h-4 w-4" />
+            </span>
+            <div className="min-w-0">
+              <p className="text-sm font-medium text-foreground">{endereco}</p>
+              <a
+                href={linkGoogleMaps}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-1 inline-flex items-center gap-1.5 text-xs sm:text-sm text-primary hover:underline"
+              >
+                Ver rota no Google Maps <ArrowRight className="h-3 w-3" />
+              </a>
+            </div>
+          </div>
+
+          <a
+            href={linkGoogleMaps}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-6 inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-full bg-primary text-primary-foreground px-7 py-4 text-sm font-semibold shadow-soft active:scale-[0.98] sm:hover:scale-[1.02] transition-transform"
+          >
+            Traçar rota até o Buganville Garden
+            <ArrowRight className="h-4 w-4" />
+          </a>
+        </Reveal>
+
+        <Reveal delay={0.15}>
+          <div className="aspect-[4/3] sm:aspect-[16/11] rounded-2xl sm:rounded-3xl overflow-hidden shadow-ring border border-border">
+            <iframe
+              title="Localização do Buganville Garden no Google Maps"
+              src={embedSrc}
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              className="h-full w-full grayscale-[15%]"
+            />
+          </div>
+        </Reveal>
+      </div>
+    </section>
+  );
+}
+
 function FAQ() {
   const perguntas = [
     {

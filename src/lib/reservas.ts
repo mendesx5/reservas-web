@@ -76,6 +76,23 @@ export interface ResumoFinanceiro {
   faturamentoPorMetodoPagamento: FaturamentoItem[];
 }
 
+/**
+ * Formata um Date como string local "ingênua" (sem conversão de fuso),
+ * no formato que o backend espera para LocalDateTime: YYYY-MM-DDTHH:mm:ss.
+ * Evita usar Date.toISOString(), que converte para UTC e desloca o horário
+ * em relação ao que o usuário realmente selecionou (ex: 08:00 vira 11:00).
+ */
+export function paraLocalDateTimeIso(data: Date): string {
+  const pad = (n: number) => String(n).padStart(2, "0");
+  const ano = data.getFullYear();
+  const mes = pad(data.getMonth() + 1);
+  const dia = pad(data.getDate());
+  const hora = pad(data.getHours());
+  const min = pad(data.getMinutes());
+  const seg = pad(data.getSeconds());
+  return `${ano}-${mes}-${dia}T${hora}:${min}:${seg}`;
+}
+
 export function formatarReal(valor: number): string {
   return valor.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 }
